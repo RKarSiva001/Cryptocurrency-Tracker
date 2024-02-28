@@ -1,48 +1,49 @@
 // Write your JS code here
 import {Component} from 'react'
-import Loader from 'react-loader-spinner'
-
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 
 import CryptocurrencyItem from '../CryptocurrencyItem'
 
+import './index.css'
+
 class CryptocurrenciesList extends Component {
-  state = {isLoading: true, cryptocurrenciesData: []}
+  renderCryptocurrenciesHeader = () => (
+    <div className="list-header">
+      <p className="list-coin-type-heading">Coin Type</p>
+      <div className="usd-and-euro-values-container">
+        <p className="list-coin-value-heading">USD</p>
+        <p className="list-coin-value-heading">EURO</p>
+      </div>
+    </div>
+  )
 
-  componentDidMount() {
-    this.getCryptocurrencyData()
-  }
+  renderCryptocurrenciesView = () => {
+    const {cryptocurrenciesData} = this.props
 
-  getCryptocurrencyData = async () => {
-    const response = await fetch(
-      'https://apis.ccbp.in/crypto-currency-converter',
+    return (
+      <div className="cryptocurrencies-list-container">
+        {this.renderCryptocurrenciesHeader()}
+        <ul className="cryptocurrencies-list">
+          {cryptocurrenciesData.map(eachCryptocurrency => (
+            <CryptocurrencyItem
+              key={eachCryptocurrency.id}
+              cryptocurrencyDetails={eachCryptocurrency}
+            />
+          ))}
+        </ul>
+      </div>
     )
-    const statusCode = await response.statusCode
-    console.log(statusCode)
-
-    const data = await response.json()
-    console.log(data)
-
-    this.setState({cryptocurrenciesData: data, isLoading: false})
   }
 
   render() {
-    const {cryptocurrenciesData, isLoading} = this.state
-    console.log(isLoading)
-
     return (
-      <div className="list-container">
-        {isLoading ? (
-          <div data-testid="loader">
-            <Loader type="Rings" color="#ffffff" height={80} width={80} />
-          </div>
-        ) : (
-          <ul>
-            {cryptocurrenciesData.map(item => (
-              <CryptocurrencyItem cryptocurrencyData={item} key={item.id} />
-            ))}
-          </ul>
-        )}
+      <div className="cryptocurrencies-container">
+        <h1 className="heading">Cryptocurrency Tracker</h1>
+        <img
+          className="cryptocurrency-img"
+          src="https://assets.ccbp.in/frontend/react-js/cryptocurrency-bg.png"
+          alt="cryptocurrency"
+        />
+        {this.renderCryptocurrenciesView()}
       </div>
     )
   }
